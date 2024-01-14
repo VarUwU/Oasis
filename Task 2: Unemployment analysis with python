@@ -1,0 +1,33 @@
+#Required libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+#Deleting the extra spaces
+df_unemployment.columns = df_unemployment.columns.str.strip()
+df_unemp.columns = df_unemp.columns.str.strip()
+
+#Merging the two datasets 
+merged_unemp = pd.merge(df_unemployment, df_unemp, on=['Region', 'Date'], how='inner')
+merged_unemp.head(5)
+
+#Lineplot
+merged_unemp['Date'] = merged_unemp['Date'].str.strip()
+merged_unemp['Date'] = pd.to_datetime(merged_unemp['Date'], format='%d-%m-%Y')
+plt.figure(figsize=(12, 6))
+# Line plot
+sns.lineplot(x='Date', y='Estimated Unemployment Rate (%)_x', hue='Area', data=merged_unemp)
+plt.title('Unemployment Rate Over Time')
+plt.xlabel('Date')
+plt.ylabel('Estimated Unemployment Rate (%)')
+plt.legend(title='Area')
+plt.show()
+
+#Barplot
+avg_unemployment_by_region = merged_unemp.groupby('Region')['Estimated Unemployment Rate (%)_x'].mean().sort_values(ascending=False)
+plt.figure(figsize=(10, 6))
+avg_unemployment_by_region.plot(kind='bar', color='skyblue', grid=True)
+plt.title('Average Unemployment Rate by Region')
+plt.xlabel('Region')
+plt.ylabel('Average Estimated Unemployment Rate (%)')
+plt.show()
